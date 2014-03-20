@@ -9,15 +9,17 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.security.spec.ECFieldF2m;
 
+import android.app.Activity;
 import android.content.Context;
+import android.widget.TextView;
 
 public class MessageReceiver extends Message implements Runnable {
-	private Context context;
+	private Activity activity;
 	private byte[] buffer;
 	
 	public MessageReceiver() {
 		// TODO Auto-generated constructor stub
-		this.context = null;
+		this.activity = null;
 		this.buffer = new byte[2048];
 		try{
 			setIp(InetAddress.getByName("10.0.0.10"));
@@ -35,14 +37,15 @@ public class MessageReceiver extends Message implements Runnable {
 		
 	}
 	
-	public MessageReceiver(String ip,Context context){
-		this.context = context;
+	public MessageReceiver(String ip,Activity activity){
+		this.activity = activity;
 		this.buffer = new byte[2048];
 		try{
 			setIp(InetAddress.getByAddress(ip.getBytes()));
 			setPort(7777);	
 			setSocket(new DatagramSocket(this.port,this.ip));
 			setPacket(new DatagramPacket(buffer, buffer.length));
+		
 		} catch (UnknownHostException e){
 			
 		} catch (SocketException e) {
@@ -53,8 +56,17 @@ public class MessageReceiver extends Message implements Runnable {
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
+		
 		while(true){
 			receive();
+			TextView messages = (TextView) activity.findViewById(R.id.textView1);
+			if(messages.getText().equals("No Messages!")){
+				messages.setText("Partner: "+content);
+			} else 
+			{
+				messages.setText(messages.getText()+"\nPartner: "+content);
+			}
+			
 		}
 
 	}
@@ -69,12 +81,12 @@ public class MessageReceiver extends Message implements Runnable {
 		
 	}
 	
-	public Context getContext(){
-		return this.context;
+	public Activity getContext(){
+		return this.activity;
 	}
 	
-	public void setContext(Context context){
-		this.context=context;
+	public void setContext(Activity activity){
+		this.activity=activity;
 	}
 
 }
