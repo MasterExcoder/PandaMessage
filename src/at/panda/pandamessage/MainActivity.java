@@ -1,6 +1,7 @@
 package at.panda.pandamessage;
 
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 import android.app.Activity;
 import android.app.ActionBar;
@@ -68,7 +69,11 @@ public class MainActivity extends Activity {
 	}
 	
 	public void send(View v){
-		sender = new MessageSender(this,InetAddress.getByName("10.0.0.11"),7777,"Hello");
+		try {
+			sender = new MessageSender(this,InetAddress.getByName("10.0.0.11"),7777,"Hello");
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		}
 		Thread send = new Thread(sender);
 		send.start();
 	}

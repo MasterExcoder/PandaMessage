@@ -59,7 +59,7 @@ public class MessageReceiver extends Message implements Runnable {
 		
 		while(true){
 			receive();
-			TextView messages = (TextView) activity.findViewById(R.id.textView1);
+			TextView messages = (TextView) activity.findViewById(R.id.textview_messages);
 			if(messages.getText().equals("No Messages!")){
 				messages.setText("Partner: "+content);
 			} else 
