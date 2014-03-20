@@ -1,30 +1,38 @@
 package at.panda.pandamessage;
 
+import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 
+import android.app.Activity;
 import android.content.Context;
 
 public class MessageSender extends Message implements Runnable {
 
-	Context context;
-	
-	public MessageSender(Context context, InetAddress ip, int port, String content) {
-		this.context = context;
+	Activity activity;
+	public MessageSender(Activity activity, InetAddress ip, int port,String content) {
+		this.activity = activity;
+		setContent(content);
 		setIp(ip);
 		setPort(port);
 		try {
-			setSocket(new DatagramSocket(port));
+			setSocket(new DatagramSocket(8888));
 		} catch (SocketException e) {
 			e.printStackTrace();
 		}
-		setContent(content);
+		
 	}
 
 	@Override
 	public void run() {
+		try{
+			setPacket(new DatagramPacket(content.getBytes(), content.getBytes().length,ip,7777));
+			socket.send(packet);
+		} catch (IOException e){
+			
+		}
 		
 	}
 

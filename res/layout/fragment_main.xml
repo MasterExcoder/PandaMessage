@@ -15,7 +15,7 @@
         android:layout_height="wrap_content" >
 
         <EditText
-            android:id="@+id/textfield_targetIP"
+            android:id="@+id/editText1"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -23,11 +23,12 @@
             android:hint="Target IP" />
 
         <Button
-            android:id="@+id/btn_start"
+            android:id="@+id/button1"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="Start " />
+
     </LinearLayout>
 
     <LinearLayout
@@ -35,18 +36,13 @@
         android:layout_height="wrap_content"
         android:orientation="vertical" >
 
-        <ScrollView
-            android:id="@+id/scroll"
+        <TextView
+            android:id="@+id/textView1"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" >
+            android:layout_height="match_parent"
+            android:text="No Messages!"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
 
-            <TextView
-                android:id="@+id/textView1"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="No Messages!"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
-        </ScrollView>
     </LinearLayout>
 
     <LinearLayout
@@ -54,19 +50,21 @@
         android:layout_height="wrap_content" >
 
         <EditText
-            android:id="@+id/textfield_message"
+            android:id="@+id/editText2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:ems="10" />
 
         <Button
-            android:id="@+id/btn_send"
+            android:id="@+id/button2"
             style="?android:attr/buttonStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:onClick="send"
             android:text="Send" />
+
     </LinearLayout>
 
 </LinearLayout>

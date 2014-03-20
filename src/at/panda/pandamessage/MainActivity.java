@@ -1,5 +1,7 @@
 package at.panda.pandamessage;
 
+import java.net.InetAddress;
+
 import android.app.Activity;
 import android.app.ActionBar;
 import android.app.Fragment;
@@ -12,7 +14,8 @@ import android.view.ViewGroup;
 import android.os.Build;
 
 public class MainActivity extends Activity {
-
+	MessageReceiver receiver;
+	MessageSender sender;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -22,6 +25,9 @@ public class MainActivity extends Activity {
 			getFragmentManager().beginTransaction()
 					.add(R.id.container, new PlaceholderFragment()).commit();
 		}
+		
+		receiver=new MessageReceiver("10.0.0.10",this);
+		
 	}
 
 	@Override
@@ -59,6 +65,12 @@ public class MainActivity extends Activity {
 					false);
 			return rootView;
 		}
+	}
+	
+	public void send(View v){
+		sender = new MessageSender(this,InetAddress.getByName("10.0.0.11"),7777,"Hello");
+		Thread send = new Thread(sender);
+		send.start();
 	}
 
 }
