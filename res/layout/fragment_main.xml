@@ -15,7 +15,7 @@
         android:layout_height="wrap_content" >
 
         <EditText
-            android:id="@+id/editText1"
+            android:id="@+id/textfield_targetIP"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -23,7 +23,7 @@
             android:hint="Target IP" />
 
         <Button
-            android:id="@+id/button1"
+            android:id="@+id/btn_start"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -50,14 +50,14 @@
         android:layout_height="wrap_content" >
 
         <EditText
-            android:id="@+id/editText2"
+            android:id="@+id/textfield_message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:ems="10" />
 
         <Button
-            android:id="@+id/button2"
+            android:id="@+id/btn_send"
             style="?android:attr/buttonStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
