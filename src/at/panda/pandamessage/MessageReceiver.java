@@ -11,6 +11,8 @@ import java.security.spec.ECFieldF2m;
 
 import android.app.Activity;
 import android.content.Context;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 public class MessageReceiver extends Message implements Runnable {
@@ -60,6 +62,28 @@ public class MessageReceiver extends Message implements Runnable {
 		while(true){
 			receive();
 			TextView messages = (TextView) activity.findViewById(R.id.textview_messages);
+			
+			if(content.equals("OPENCONVERSATION")){
+				String answer = "SUCCESSFULL";
+				packet = new DatagramPacket(answer.getBytes(), 0, answer.getBytes().length, packet.getAddress(), port);
+				try {
+					socket.send(packet);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			if(content.equals("SUCCESSFULL")){
+				EditText message = (EditText) activity.findViewById(R.id.textfield_messageText);
+				Button send = (Button) activity.findViewById(R.id.btn_send);
+				EditText targetip = (EditText) activity.findViewById(R.id.textfield_targetIP);
+				Button start = (Button) activity.findViewById(R.id.btn_start);
+				
+				targetip.setClickable(false);
+				start.setClickable(false);
+				message.setClickable(true);
+				send.setClickable(true);
+			}
 			if(messages.getText().equals("No Messages!")){
 				messages.setText("Partner: "+content);
 			} else 

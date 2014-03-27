@@ -8,6 +8,7 @@ import java.net.SocketException;
 
 import android.app.Activity;
 import android.content.Context;
+import android.widget.TextView;
 
 public class MessageSender extends Message implements Runnable {
 
@@ -30,8 +31,16 @@ public class MessageSender extends Message implements Runnable {
 		try{
 			setPacket(new DatagramPacket(content.getBytes(), content.getBytes().length,ip,7777));
 			socket.send(packet);
-		} catch (IOException e){
+			TextView messageview = (TextView) activity.findViewById(R.id.messageview);
+			if(messageview.getText().equals("No Messages!")){
+				messageview.setText("You: "+content);
+			} else{
+				messageview.setText(messageview.getText()+"\nYou: "+content);
+			}
 			
+			
+		} catch (IOException e){
+			e.printStackTrace();
 		}
 		
 	}

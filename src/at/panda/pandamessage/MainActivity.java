@@ -12,11 +12,18 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.os.Build;
 
 public class MainActivity extends Activity {
 	MessageReceiver receiver;
 	MessageSender sender;
+	
+	TextView targetipview;
+	EditText messageview;
+	String targetip;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -28,7 +35,8 @@ public class MainActivity extends Activity {
 		}
 		
 		receiver=new MessageReceiver("10.0.0.10",this);
-		
+		targetipview = (TextView) findViewById(R.id.textfield_targetIP);
+		messageview = (EditText) findViewById(R.id.textfield_messageText);
 	}
 
 	@Override
@@ -68,14 +76,26 @@ public class MainActivity extends Activity {
 		}
 	}
 	
-	public void send(View v){
-		try {
-			sender = new MessageSender(this,InetAddress.getByName("10.0.0.11"),7777,"Hello");
-		} catch (UnknownHostException e) {
+	public void start(View v){
+		try{
+			String targetip = targetipview.getText().toString();
+			sender = new MessageSender(this,InetAddress.getByName(targetip),7777,"OPENCONVERSATION");
+		} catch(UnknownHostException e){
 			e.printStackTrace();
 		}
-		Thread send = new Thread(sender);
-		send.start();
+		
+	}
+	
+	public void send(View v){
+		try{
+			String message = messageview.getText().toString();
+			sender = new MessageSender(this,InetAddress.getByName(targetip),7777,message);
+			Thread send = new Thread(sender);
+			send.start();
+		} catch (UnknownHostException e){
+			e.printStackTrace();
+		}
+		
 	}
 
 }
