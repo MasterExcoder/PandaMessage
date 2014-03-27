@@ -31,7 +31,7 @@ public class MessageSender extends Message implements Runnable {
 		try{
 			setPacket(new DatagramPacket(content.getBytes(), content.getBytes().length,ip,7777));
 			socket.send(packet);
-			TextView messageview = (TextView) activity.findViewById(R.id.messageview);
+			TextView messageview = (TextView) activity.findViewById(R.id.textview_messages);
 			if(messageview.getText().equals("No Messages!")){
 				messageview.setText("You: "+content);
 			} else{
