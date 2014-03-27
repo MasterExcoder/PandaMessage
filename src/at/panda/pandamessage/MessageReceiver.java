@@ -44,15 +44,16 @@ public class MessageReceiver extends Message implements Runnable {
 		this.activity = activity;
 		this.buffer = new byte[2048];
 		try{
-			setIp(InetAddress.getByAddress(ip.getBytes()));
+			setIp(InetAddress.getByName(ip));
 			setPort(7777);	
-			setSocket(new DatagramSocket(this.port,this.ip));
+			setSocket(new DatagramSocket(getPort()));
 			setPacket(new DatagramPacket(buffer, buffer.length));
 		
 		} catch (UnknownHostException e){
-			
+			Toast.makeText(activity, "Unknown Host @ MessageReceiver", Toast.LENGTH_LONG).show();
 		} catch (SocketException e) {
 			// TODO: handle exception
+			Toast.makeText(activity, "Socket @ MessageReceiver", Toast.LENGTH_LONG).show();
 		}
 	}
 
@@ -70,9 +71,10 @@ public class MessageReceiver extends Message implements Runnable {
 				packet = new DatagramPacket(answer.getBytes(), 0, answer.getBytes().length, packet.getAddress(), port);
 				try {
 					socket.send(packet);
-					Toast.makeText(activity, "OPENCONVERSATION", Toast.LENGTH_LONG);
+					Toast.makeText(activity, "OPENCONVERSATION", Toast.LENGTH_LONG).show();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
+					Toast.makeText(activity, "FAILCONVERSATION @ MessageReceiver:run", Toast.LENGTH_LONG).show();
 					e.printStackTrace();
 				}
 			}
@@ -81,7 +83,7 @@ public class MessageReceiver extends Message implements Runnable {
 				Button send = (Button) activity.findViewById(R.id.btn_send);
 				EditText targetip = (EditText) activity.findViewById(R.id.textfield_targetIP);
 				Button start = (Button) activity.findViewById(R.id.btn_start);
-				Toast.makeText(activity, "SUCCESSFULL", Toast.LENGTH_LONG);
+				Toast.makeText(activity, "SUCCESSFULL", Toast.LENGTH_LONG).show();
 				targetip.setClickable(false);
 				start.setClickable(false);
 				message.setClickable(true);
@@ -103,7 +105,7 @@ public class MessageReceiver extends Message implements Runnable {
 			socket.receive(packet);
 			content = new String(buffer,0,buffer.length);
 		} catch(IOException e){
-			
+			Toast.makeText(activity, "IO exception @ MessageReceiver", Toast.LENGTH_LONG).show();
 		}
 		
 	}

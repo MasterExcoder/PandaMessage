@@ -20,9 +20,9 @@ public class MessageSender extends Message implements Runnable {
 		setIp(ip);
 		setPort(port);
 		try {
-			setSocket(new DatagramSocket(8888));
+			setSocket(new DatagramSocket(getPort()));
 		} catch (SocketException e) {
-			e.printStackTrace();
+			Toast.makeText(activity, "SocketException @ MessageSender", Toast.LENGTH_LONG).show();
 		}
 		
 	}
@@ -32,7 +32,7 @@ public class MessageSender extends Message implements Runnable {
 		try{
 			setPacket(new DatagramPacket(content.getBytes(), content.getBytes().length,ip,7777));
 			socket.send(packet);
-			Toast.makeText(activity, "SENDED", Toast.LENGTH_LONG);
+			Toast.makeText(activity, "SENDED", Toast.LENGTH_LONG).show();
 			TextView messageview = (TextView) activity.findViewById(R.id.textview_messages);
 			if(messageview.getText().equals("No Messages!")){
 				messageview.setText("You: "+content);
@@ -42,7 +42,7 @@ public class MessageSender extends Message implements Runnable {
 			
 			
 		} catch (IOException e){
-			e.printStackTrace();
+			Toast.makeText(activity, "IO Exception @ MessageSender", Toast.LENGTH_LONG).show();
 		}
 		
 	}
