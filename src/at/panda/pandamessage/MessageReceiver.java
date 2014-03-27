@@ -14,6 +14,7 @@ import android.content.Context;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MessageReceiver extends Message implements Runnable {
 	private Activity activity;
@@ -64,10 +65,12 @@ public class MessageReceiver extends Message implements Runnable {
 			TextView messages = (TextView) activity.findViewById(R.id.textview_messages);
 			
 			if(content.equals("OPENCONVERSATION")){
+				
 				String answer = "SUCCESSFULL";
 				packet = new DatagramPacket(answer.getBytes(), 0, answer.getBytes().length, packet.getAddress(), port);
 				try {
 					socket.send(packet);
+					Toast.makeText(activity, "OPENCONVERSATION", Toast.LENGTH_LONG);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -78,7 +81,7 @@ public class MessageReceiver extends Message implements Runnable {
 				Button send = (Button) activity.findViewById(R.id.btn_send);
 				EditText targetip = (EditText) activity.findViewById(R.id.textfield_targetIP);
 				Button start = (Button) activity.findViewById(R.id.btn_start);
-				
+				Toast.makeText(activity, "SUCCESSFULL", Toast.LENGTH_LONG);
 				targetip.setClickable(false);
 				start.setClickable(false);
 				message.setClickable(true);

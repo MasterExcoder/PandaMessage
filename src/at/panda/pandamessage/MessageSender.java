@@ -9,6 +9,7 @@ import java.net.SocketException;
 import android.app.Activity;
 import android.content.Context;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MessageSender extends Message implements Runnable {
 
@@ -31,6 +32,7 @@ public class MessageSender extends Message implements Runnable {
 		try{
 			setPacket(new DatagramPacket(content.getBytes(), content.getBytes().length,ip,7777));
 			socket.send(packet);
+			Toast.makeText(activity, "SENDED", Toast.LENGTH_LONG);
 			TextView messageview = (TextView) activity.findViewById(R.id.textview_messages);
 			if(messageview.getText().equals("No Messages!")){
 				messageview.setText("You: "+content);
