@@ -11,6 +11,7 @@ import java.security.spec.ECFieldF2m;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -51,9 +52,11 @@ public class MessageReceiver extends Message implements Runnable {
 		
 		} catch (UnknownHostException e){
 			Toast.makeText(activity, "Unknown Host @ MessageReceiver", Toast.LENGTH_LONG).show();
+			Log.d("UnknownHost Exception",e.getMessage());
 		} catch (SocketException e) {
 			// TODO: handle exception
-			Toast.makeText(activity, "Socket @ MessageReceiver", Toast.LENGTH_LONG).show();
+			Toast.makeText(activity, "Socket Exception @ MessageReceiver", Toast.LENGTH_LONG).show();
+			Log.d("Socket Exception",e.getMessage());
 		}
 	}
 
@@ -75,7 +78,7 @@ public class MessageReceiver extends Message implements Runnable {
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					Toast.makeText(activity, "FAILCONVERSATION @ MessageReceiver:run", Toast.LENGTH_LONG).show();
-					e.printStackTrace();
+					Log.d("IO Exception",e.getMessage());
 				}
 			}
 			if(content.equals("SUCCESSFULL")){
@@ -106,6 +109,7 @@ public class MessageReceiver extends Message implements Runnable {
 			content = new String(buffer,0,buffer.length);
 		} catch(IOException e){
 			Toast.makeText(activity, "IO exception @ MessageReceiver", Toast.LENGTH_LONG).show();
+			Log.d("IO Exception",e.getMessage());
 		}
 		
 	}

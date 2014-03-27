@@ -8,6 +8,7 @@ import java.net.SocketException;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +24,7 @@ public class MessageSender extends Message implements Runnable {
 			setSocket(new DatagramSocket(getPort()));
 		} catch (SocketException e) {
 			Toast.makeText(activity, "SocketException @ MessageSender", Toast.LENGTH_LONG).show();
+			Log.d("SocketException",e.getMessage());
 		}
 		
 	}
@@ -38,11 +40,10 @@ public class MessageSender extends Message implements Runnable {
 				messageview.setText("You: "+content);
 			} else{
 				messageview.setText(messageview.getText()+"\nYou: "+content);
-			}
-			
-			
+			}			
 		} catch (IOException e){
 			Toast.makeText(activity, "IO Exception @ MessageSender", Toast.LENGTH_LONG).show();
+			Log.d("IO Exception",e.getMessage());
 		}
 		
 	}
