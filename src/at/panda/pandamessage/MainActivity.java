@@ -39,7 +39,14 @@ public class MainActivity extends Activity {
 		messageview = (EditText) findViewById(R.id.textfield_messageText);
 	}
 
-	@Override
+    @Override
+    protected void onPause() {
+        super.onPause();
+        receiver.getSocket().close();
+        sender.getSocket().close();
+    }
+
+    @Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 
 		// Inflate the menu; this adds items to the action bar if it is present.

@@ -24,6 +24,7 @@ public class MessageSender extends Message implements Runnable {
 			setSocket(new DatagramSocket(getPort()));
 		} catch (SocketException e) {
 			Toast.makeText(activity, "SocketException @ MessageSender", Toast.LENGTH_LONG).show();
+            socket.close();
 			Log.d("SocketException",e.getMessage());
 		}
 		
