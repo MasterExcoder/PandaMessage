@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.os.Build;
+import android.widget.Toast;
 
 public class MainActivity extends Activity {
 	MessageReceiver receiver;
@@ -23,6 +24,8 @@ public class MainActivity extends Activity {
 	EditText targetipview;
 	EditText messageview;
 	String targetip;
+
+    Thread sendthread,receivethread;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -42,8 +45,6 @@ public class MainActivity extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
-        receiver.getSocket().close();
-        sender.getSocket().close();
     }
 
     @Override
@@ -85,11 +86,26 @@ public class MainActivity extends Activity {
 	
 	public void start(View v){
 		try{
-			if(targetipview != null){
-				targetip = targetipview.getText().toString();
-			}
-			receiver=new MessageReceiver("10.0.0.10",this);
-			sender = new MessageSender(this,InetAddress.getByName(targetip),8888,"OPENCONVERSATION");
+			targetipview = (EditText) findViewById(R.id.textfield_targetIP);
+			targetip = targetipview.getText().toString();
+
+            if(receiver ==null){
+                receiver=new MessageReceiver(this);
+                receivethread = new Thread(receivethread);
+                receivethread.start();
+            }
+            Toast.makeText(this,"ZielIp: "+targetip,Toast.LENGTH_SHORT).show();
+            if(sender ==null){
+                sender = new MessageSender(this,InetAddress.getByName(targetip),8888,"OPENCONVERSATION");
+                sendthread = new Thread(sender);
+            } else {
+                sender.setIp(InetAddress.getByName(targetip));
+                sender.setContent("OPENCONVERSATION");
+                sendthread = new Thread(sender);
+            }
+            sendthread.start();
+
+
 		} catch(UnknownHostException e){
 			e.printStackTrace();
 		}
@@ -98,14 +114,30 @@ public class MainActivity extends Activity {
 	
 	public void send(View v){
 		try{
-			String message = messageview.getText().toString();
-			sender = new MessageSender(this,InetAddress.getByName(targetip),8888,message);
-			Thread send = new Thread(sender);
-			send.start();
-		} catch (UnknownHostException e){
+            String message="Error";
+            if(messageview != null){
+                message = messageview.getText().toString();
+            }
+			sender.setContent("message");
+            sendthread.start();
+            TextView messageview = (TextView) findViewById(R.id.textview_messages);
+            if(messageview.getText().toString().equals("No Messages!")){
+                messageview.setText("You: "+message);
+            } else{
+                messageview.setText(messageview.getText()+"\nYou: "+message);
+            }
+		} catch (Exception e){
 			e.printStackTrace();
 		}
 		
 	}
 
+    public void setMessages(String message){
+        if(messageview != null && messageview.getText().toString().equals("No Messages!")){
+            messageview.setText("Partner: "+message);
+        } else if(messageview != null)
+        {
+            messageview.setText(messageview.getText().toString()+"\nPartner: "+message);
+        }
+    }
 }

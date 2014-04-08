@@ -11,6 +11,7 @@ import java.security.spec.ECFieldF2m;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.Looper;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,22 +19,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class MessageReceiver extends Message implements Runnable {
-	private Activity activity;
+	private MainActivity activity;
 	private byte[] buffer;
+    private TextView messages;
 	
 	public MessageReceiver() {
 		// TODO Auto-generated constructor stub
 		this.activity = null;
 		this.buffer = new byte[2048];
 		try{
-			setIp(InetAddress.getByName("10.0.0.10"));
 			setPort(7777);
 			setContent("");
-			setSocket(new DatagramSocket(port, ip));
+			setSocket(new DatagramSocket(port));
 			setPacket(new DatagramPacket(buffer, buffer.length));
-			
-		} catch (UnknownHostException e){
-			
 		} catch (SocketException e) {
 			// TODO: handle exception
 		}
@@ -41,21 +39,19 @@ public class MessageReceiver extends Message implements Runnable {
 		
 	}
 	
-	public MessageReceiver(String ip,Activity activity){
+	public MessageReceiver(MainActivity activity){
 		this.activity = activity;
 		this.buffer = new byte[2048];
 		try{
-			setIp(InetAddress.getByName(ip));
+            if(this.getSocket()!=null){
+                this.getSocket().setReuseAddress(true);
+            }
 			setPort(7777);	
 			setSocket(new DatagramSocket(getPort()));
 			setPacket(new DatagramPacket(buffer, buffer.length));
-		
-		} catch (UnknownHostException e){
-			Toast.makeText(activity, "Unknown Host @ MessageReceiver", Toast.LENGTH_LONG).show();
-			Log.d("UnknownHost Exception",e.getMessage());
 		} catch (SocketException e) {
 			// TODO: handle exception
-			Toast.makeText(activity, "Socket Exception @ MessageReceiver", Toast.LENGTH_LONG).show();
+			Toast.makeText(activity, "SocketException @ MessageReceiver", Toast.LENGTH_LONG).show();
 			Log.d("Socket Exception",e.getMessage());
 		}
 	}
@@ -63,18 +59,17 @@ public class MessageReceiver extends Message implements Runnable {
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
-		
+        Looper.prepare();
 		while(true){
+
 			receive();
-			TextView messages = (TextView) activity.findViewById(R.id.textview_messages);
-			
+			messages = (TextView) activity.findViewById(R.id.textview_messages);
 			if(content.equals("OPENCONVERSATION")){
-				
 				String answer = "SUCCESSFULL";
 				packet = new DatagramPacket(answer.getBytes(), 0, answer.getBytes().length, packet.getAddress(), port);
+                Toast.makeText(activity, "OPENCONVERSATION", Toast.LENGTH_LONG).show();
 				try {
 					socket.send(packet);
-					Toast.makeText(activity, "OPENCONVERSATION", Toast.LENGTH_LONG).show();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					Toast.makeText(activity, "FAILCONVERSATION @ MessageReceiver:run", Toast.LENGTH_LONG).show();
@@ -92,12 +87,11 @@ public class MessageReceiver extends Message implements Runnable {
 				message.setClickable(true);
 				send.setClickable(true);
 			}
-			if(messages.getText().equals("No Messages!")){
-				messages.setText("Partner: "+content);
-			} else 
-			{
-				messages.setText(messages.getText()+"\nPartner: "+content);
-			}
+            else{
+                if(activity != null){
+                    activity.setMessages(buffer.toString());
+                }
+            }
 			
 		}
 
@@ -106,7 +100,8 @@ public class MessageReceiver extends Message implements Runnable {
 	public void receive(){
 		try{
 			socket.receive(packet);
-			content = new String(buffer,0,buffer.length);
+            buffer = packet.getData();
+			this.content = new String(buffer,0,buffer.length);
 		} catch(IOException e){
 			Toast.makeText(activity, "IO exception @ MessageReceiver", Toast.LENGTH_LONG).show();
 			Log.d("IO Exception",e.getMessage());
@@ -118,7 +113,7 @@ public class MessageReceiver extends Message implements Runnable {
 		return this.activity;
 	}
 	
-	public void setContext(Activity activity){
+	public void setContext(MainActivity activity){
 		this.activity=activity;
 	}
 
