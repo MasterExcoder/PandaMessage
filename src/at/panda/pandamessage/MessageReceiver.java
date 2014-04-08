@@ -22,21 +22,19 @@ public class MessageReceiver extends Message implements Runnable {
 	private MainActivity activity;
 	private byte[] buffer;
     private TextView messages;
-	
+    static boolean receive=true;
+    static boolean ready = false;
+    private DatagramPacket successfull;
+
+
 	public MessageReceiver() {
 		// TODO Auto-generated constructor stub
 		this.activity = null;
 		this.buffer = new byte[2048];
-		try{
-			setPort(7777);
-			setContent("");
-			setSocket(new DatagramSocket(port));
-			setPacket(new DatagramPacket(buffer, buffer.length));
-		} catch (SocketException e) {
-			// TODO: handle exception
-		}
-		
-		
+		setPort(7777);
+		setContent("");
+		setSocket(null);
+		setPacket(null);
 	}
 	
 	public MessageReceiver(MainActivity activity){
@@ -46,6 +44,7 @@ public class MessageReceiver extends Message implements Runnable {
             if(this.getSocket()!=null){
                 this.getSocket().setReuseAddress(true);
             }
+            setContent("");
 			setPort(7777);	
 			setSocket(new DatagramSocket(getPort()));
 			setPacket(new DatagramPacket(buffer, buffer.length));
@@ -53,61 +52,67 @@ public class MessageReceiver extends Message implements Runnable {
 			// TODO: handle exception
 			Toast.makeText(activity, "SocketException @ MessageReceiver", Toast.LENGTH_LONG).show();
 			Log.d("Socket Exception",e.getMessage());
+            e.printStackTrace();
 		}
 	}
 
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
-        Looper.prepare();
-		while(true){
+        try{
+            while(receive){
+                receive();
+                messages = (TextView) activity.findViewById(R.id.textview_messages);
+                if(content.compareTo("OPENCONVERSATION")==0){
+                  Log.d("Open","OPENCONVERSATION");
+                  sendAnswer("SUCCESSFULL");
+                  MessageSender sender = activity.getSender();
+                  if(sender == null){
+                      sender = new MessageSender(activity,packet.getAddress(),8888,"");
+                      activity.setSender(sender);
+                      Thread send = new Thread(sender);
+                      send.start();
 
-			receive();
-			messages = (TextView) activity.findViewById(R.id.textview_messages);
-			if(content.equals("OPENCONVERSATION")){
-				String answer = "SUCCESSFULL";
-				packet = new DatagramPacket(answer.getBytes(), 0, answer.getBytes().length, packet.getAddress(), port);
-                Toast.makeText(activity, "OPENCONVERSATION", Toast.LENGTH_LONG).show();
-				try {
-					socket.send(packet);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					Toast.makeText(activity, "FAILCONVERSATION @ MessageReceiver:run", Toast.LENGTH_LONG).show();
-					Log.d("IO Exception",e.getMessage());
-				}
-			}
-			if(content.equals("SUCCESSFULL")){
-				EditText message = (EditText) activity.findViewById(R.id.textfield_messageText);
-				Button send = (Button) activity.findViewById(R.id.btn_send);
-				EditText targetip = (EditText) activity.findViewById(R.id.textfield_targetIP);
-				Button start = (Button) activity.findViewById(R.id.btn_start);
-				Toast.makeText(activity, "SUCCESSFULL", Toast.LENGTH_LONG).show();
-				targetip.setClickable(false);
-				start.setClickable(false);
-				message.setClickable(true);
-				send.setClickable(true);
-			}
-            else{
-                if(activity != null){
-                    activity.setMessages(buffer.toString());
+                  }
+                }
+                if(content.compareTo("SUCCESSFULL")==0){
+                    Log.d("Erfolgreich","SUCCESSFULL");
+                    sendAnswer("ACCOMPLISHED");
+                    ready=true;
+                }
+                if(content.compareTo("ACCOMPLISHED")==0){
+                    Log.d("Bestätigt","ACCOMPLISHED");
+                    ready=true;
                 }
             }
-			
-		}
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
 
 	}
 	
 	public void receive(){
 		try{
-			socket.receive(packet);
-            buffer = packet.getData();
-			this.content = new String(buffer,0,buffer.length);
+			this.socket.receive(this.packet);
+            content =new String(packet.getData(),0,packet.getLength());
+
 		} catch(IOException e){
 			Toast.makeText(activity, "IO exception @ MessageReceiver", Toast.LENGTH_LONG).show();
 			Log.d("IO Exception",e.getMessage());
 		}
 		
 	}
+    public void sendAnswer(String answer){
+        DatagramPacket packet1 = new DatagramPacket(answer.getBytes(), 0, answer.getBytes().length, packet.getAddress(), port);
+        try {
+            socket.send(packet1);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            Toast.makeText(activity, "FAILCONVERSATION @ MessageReceiver:run", Toast.LENGTH_LONG).show();
+            Log.d("IO Exception",e.getMessage());
+        }
+    }
 	
 	public Activity getContext(){
 		return this.activity;

@@ -20,7 +20,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:ems="10"
-            android:hint="Target IP" />
+            android:hint="Target IP" android:clickable="true" android:enabled="true"/>
 
         <Button
             android:id="@+id/btn_start"
@@ -28,7 +28,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:onClick="start"
-            android:text="Start " />
+            android:text="Start " android:enabled="true" android:clickable="true"/>
 
     </LinearLayout>
 
@@ -55,8 +55,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:clickable="false"
-            android:ems="10" />
+            android:clickable="true"
+            android:ems="10" android:enabled="false" android:editable="true" android:filterTouchesWhenObscured="false"/>
 
         <Button
             android:id="@+id/btn_send"
@@ -64,10 +64,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:clickable="false"
+            android:clickable="true"
             android:onClick="send"
             android:text="Send"
-            android:enabled="true"/>
+            android:enabled="false"/>
 
     </LinearLayout>
 

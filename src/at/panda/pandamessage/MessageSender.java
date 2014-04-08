@@ -18,40 +18,39 @@ public class MessageSender extends Message implements Runnable {
 	Activity activity;
 	public MessageSender(Activity activity, InetAddress ip, int port,String content) {
 		this.activity = activity;
-        setPacket(new DatagramPacket(content.getBytes(),0,content.getBytes().length));
+        setPacket(new DatagramPacket(content.getBytes(), 0, content.getBytes().length));
 		setContent(content);
 		setIp(ip);
 		setPort(port);
-		try {
-            if(this.getSocket()!=null){
-                this.getSocket().setReuseAddress(true);
-            }
-			setSocket(new DatagramSocket(getPort()));
-
-		} catch (SocketException e) {
-			Toast.makeText(activity, "SocketException @ MessageSender", Toast.LENGTH_LONG).show();
-            Log.d("Socket Exception",e.getMessage());
+        try {
+            setSocket(new DatagramSocket(getPort()));
+        } catch (SocketException e) {
             e.printStackTrace();
-		}
-	}
+        }
+    }
 
 	@Override
 	public void run() {
-		try{
-            Looper.prepare();
-            socket.connect(this.getIp(),7777);
-            this.packet.setData(content.getBytes(),0,content.getBytes().length);
-            this.packet.setAddress(ip);
-            this.packet.setPort(7777);
-			socket.send(this.getPacket());
-            Toast.makeText(activity, "SENDED", Toast.LENGTH_LONG).show();
+     socket.connect(this.getIp(), 7777);
+     if(socket.isConnected()==true){
+        Log.d("Connected","Connected successfully");
+        Log.d("To", socket.getRemoteSocketAddress().toString());
+     }
+     send();
 
-		} catch (IOException e){
-			Toast.makeText(activity, "IO Exception @ MessageSender", Toast.LENGTH_LONG).show();
-			Log.d("IO Exception",e.getMessage());
-		}
-
-		
 	}
+
+    public void send(){
+        byte[] raw = content.getBytes();
+        this.packet.setData(raw,0,raw.length);
+        this.packet.setAddress(ip);
+        this.packet.setPort(7777);
+        try {
+            socket.send(this.getPacket());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Log.d("Sended","Nachricht: "+content+" gesendet");
+    }
 
 }
