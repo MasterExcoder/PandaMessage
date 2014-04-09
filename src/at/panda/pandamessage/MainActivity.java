@@ -101,10 +101,6 @@ public class MainActivity extends Activity {
 			targetipview = (EditText) findViewById(R.id.textfield_targetIP);
 			targetip = targetipview.getText().toString();
 
-
-            Log.d("Status","Reiceiver: "+receivethread.getState().toString());
-            Toast.makeText(this,"Ziel-Ip: "+targetip,Toast.LENGTH_SHORT).show();
-
             if(sender==null){
                 sender = new MessageSender(this,InetAddress.getByName(targetip),8888,"OPENCONVERSATION");
                 sendthread = new Thread(sender);
@@ -121,14 +117,15 @@ public class MainActivity extends Activity {
 		try{
             String message="Error";
             messageview = (EditText) findViewById(R.id.textfield_messageText);
-
+            TextView messages = (TextView) findViewById(R.id.textview_messages);
             if(messageview != null && messageview.getText()!=null){
                 message = messageview.getText().toString();
                 messageview.setText("");
             }
-			sender.setContent(message);
-            sender.send();
-            TextView messages = (TextView) findViewById(R.id.textview_messages);
+            if(sender!=null){
+                sender.setContent(message);
+                sender.send();
+            }
             if(messages.getText().toString().equals("No Messages!")){
                 messages.setText("You: "+message);
             } else{
@@ -147,11 +144,10 @@ public class MainActivity extends Activity {
             if(messages != null && messages.getText()!=null) {
                 if (messages.getText().toString().compareTo("No Messages!") == 0) {
                     messages.setText("Partner: " + message);
-                    prevmessage=message;
                 } else {
                     messages.setText(messages.getText().toString() + "\nPartner: " + message);
-                    prevmessage=message;
                 }
+                prevmessage=message;
             }
         }
 
@@ -171,18 +167,21 @@ public class MainActivity extends Activity {
 
 
     public void setButtonsForConversation(){
-
+        EditText message = (EditText) this.findViewById(R.id.textfield_messageText);
+        Button send = (Button) this.findViewById(R.id.btn_send);
+        EditText targetip = (EditText) this.findViewById(R.id.textfield_targetIP);
+        Button start = (Button) this.findViewById(R.id.btn_start);
         if(MessageReceiver.ready==true){
-            EditText message = (EditText) this.findViewById(R.id.textfield_messageText);
-            Button send = (Button) this.findViewById(R.id.btn_send);
-            EditText targetip = (EditText) this.findViewById(R.id.textfield_targetIP);
-            Button start = (Button) this.findViewById(R.id.btn_start);
-
             targetip.setText(sender.getIp().toString());
             targetip.setEnabled(false);
             start.setEnabled(false);
             message.setEnabled(true);
             send.setEnabled(true);
+        } else{
+            targetip.setEnabled(true);
+            start.setEnabled(true);
+            message.setEnabled(false);
+            send.setEnabled(false);
         }
 
     }

@@ -32,10 +32,6 @@ public class MessageSender extends Message implements Runnable {
 	@Override
 	public void run() {
      socket.connect(this.getIp(), 7777);
-     if(socket.isConnected()==true){
-        Log.d("Connected","Connected successfully");
-        Log.d("To", socket.getRemoteSocketAddress().toString());
-     }
      send();
 
 	}
@@ -43,7 +39,7 @@ public class MessageSender extends Message implements Runnable {
     public void send(){
         byte[] raw = content.getBytes();
         this.packet.setData(raw,0,raw.length);
-        this.packet.setAddress(ip);
+        this.packet.setAddress(getIp());
         this.packet.setPort(7777);
         try {
             socket.send(this.getPacket());

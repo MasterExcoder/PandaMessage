@@ -38,12 +38,9 @@ public class MessageReceiver extends Message implements Runnable {
 	}
 	
 	public MessageReceiver(MainActivity activity){
-		this.activity = activity;
-		this.buffer = new byte[2048];
 		try{
-            if(this.getSocket()!=null){
-                this.getSocket().setReuseAddress(true);
-            }
+            this.activity = activity;
+            this.buffer = new byte[2048];
             setContent("");
 			setPort(7777);	
 			setSocket(new DatagramSocket(getPort()));
@@ -63,25 +60,15 @@ public class MessageReceiver extends Message implements Runnable {
             while(receive){
                 receive();
                 messages = (TextView) activity.findViewById(R.id.textview_messages);
-                if(content.compareTo("OPENCONVERSATION")==0){
-                  Log.d("Open","OPENCONVERSATION");
-                  sendAnswer("SUCCESSFULL");
-                  MessageSender sender = activity.getSender();
-                  if(sender == null){
-                      sender = new MessageSender(activity,packet.getAddress(),8888,"");
-                      activity.setSender(sender);
-                      Thread send = new Thread(sender);
-                      send.start();
-
-                  }
+                if(content.compareTo("OPENCONVERSATION")==0) {
+                    sendAnswer("SUCCESSFULL");
+                    startSender();
                 }
                 if(content.compareTo("SUCCESSFULL")==0){
-                    Log.d("Erfolgreich","SUCCESSFULL");
                     sendAnswer("ACCOMPLISHED");
                     ready=true;
                 }
                 if(content.compareTo("ACCOMPLISHED")==0){
-                    Log.d("Bestätigt","ACCOMPLISHED");
                     ready=true;
                 }
             }
@@ -103,6 +90,18 @@ public class MessageReceiver extends Message implements Runnable {
 		}
 		
 	}
+
+    public void startSender(){
+        MessageSender sender = activity.getSender();
+        if(sender == null){
+            sender = new MessageSender(activity,packet.getAddress(),8888,"");
+            activity.setSender(sender);
+            Thread send = new Thread(sender);
+            send.start();
+
+        }
+    }
+
     public void sendAnswer(String answer){
         DatagramPacket packet1 = new DatagramPacket(answer.getBytes(), 0, answer.getBytes().length, packet.getAddress(), port);
         try {
