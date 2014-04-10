@@ -75,8 +75,6 @@ public class MessageReceiver extends Message implements Runnable {
         } catch (Exception e){
             e.printStackTrace();
         }
-
-
 	}
 	
 	public void receive(){

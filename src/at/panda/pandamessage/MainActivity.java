@@ -161,7 +161,7 @@ public class MainActivity extends Activity {
                 if(receiver!=null){
                     setMessages(receiver.getContent());
                 }
-            }
+        }
         });
     }
 
