@@ -10,6 +10,8 @@ import java.util.TimerTask;
 import android.app.Activity;
 import android.app.ActionBar;
 import android.app.Fragment;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -56,6 +58,8 @@ public class MainActivity extends Activity {
                 updateGUI();
             }
         }, 0, 1000);
+
+
 	}
 
 
@@ -160,11 +164,25 @@ public class MainActivity extends Activity {
                 setButtonsForConversation();
                 if(receiver!=null){
                     setMessages(receiver.getContent());
+                    //Displays the local ip address in the main Activity
+                    TextView localIpView = (TextView) findViewById(R.id.localIpView);
+                    localIpView.setText("Local IP: " + getLocalIP());
                 }
             }
         });
     }
 
+    /**
+     * Gets the local WiFi IP Address and
+     * @return the local WiFi IP Address
+     */
+    public String getLocalIP() {
+        WifiManager wifiManager = (WifiManager) getSystemService(WIFI_SERVICE);
+        WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+        int ipAddress = wifiInfo.getIpAddress();
+        String ip = String.format("%d.%d.%d.%d", (ipAddress & 0xff),(ipAddress >> 8 & 0xff),(ipAddress >> 16 & 0xff),(ipAddress >> 24 & 0xff));
+        return ip;
+    }
 
     public void setButtonsForConversation(){
         EditText message = (EditText) this.findViewById(R.id.textfield_messageText);
